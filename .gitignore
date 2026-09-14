@@ -1,0 +1,42 @@
+# --- Python (ml-pipeline, inference-service) ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# Model artifacts (version separately - see ml-pipeline/model/README.md)
+ml-pipeline/model/checkpoints/*
+!ml-pipeline/model/checkpoints/.gitkeep
+*.h5
+*.pt
+*.pth
+*.onnx
+*.ckpt
+
+# Large geospatial / imagery data
+*.tif
+*.tiff
+*.geotiff
+data/
+datasets/
+
+# --- Node (backend, frontend) ---
+node_modules/
+dist/
+build/
+.next/
+coverage/
+
+# --- Env / secrets ---
+.env
+.env.*
+!.env.example
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
