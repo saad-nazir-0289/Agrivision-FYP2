@@ -6,7 +6,8 @@ import * as auth from '../controllers/authController.js';
 const router = Router();
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 30,
+  limit: process.env.NODE_ENV === 'production' ? 30 : 500,
+  message: { message: 'Too many attempts, please try again in a few minutes' },
   skip: () => process.env.NODE_ENV === 'test',
 });
 
