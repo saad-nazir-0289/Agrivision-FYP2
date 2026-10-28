@@ -31,7 +31,7 @@ export default function Login() {
       const data = await api('/auth/login', { method: 'POST', body: form });
        // Save user session and redirect to the dashboard
       saveSession(data, form.rememberMe);
-      void navigate('/');
+      void navigate(data.user.role === 'admin' ? '/admin' : '/'); // admins go straight to their panel
     } catch (err) {   // Display any login errors returned by the server
       setError(err.message);
     } finally { // Reset loading state regardless of success or failure
