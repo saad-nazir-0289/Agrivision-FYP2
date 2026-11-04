@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import Aoi from '../models/Aoi.js';
 import User from '../models/User.js';
 import { validatePolygon } from '../utils/geo.js';
+import NdviResult from '../models/NdviResult.js';
+import { removeAoiFolder } from '../services/ndviStore.js';
 
 // Checks a list of user ids. Returns the ids if every one is a real farmer, otherwise null.
 async function farmerIds(ids = []) {
@@ -65,5 +67,8 @@ export async function deleteAoi(req, res) {
   if (!mongoose.isValidObjectId(id) || !(await Aoi.findByIdAndDelete(id))) {
     return res.status(404).json({ message: 'AOI not found' });
   }
+    // Remove the AOI's NDVI results and their pixel files too.
+  await Promise.all([NdviResult.deleteMany({ aoi: id }), removeAoiFolder(id)]);
   res.json({ message: 'AOI deleted' });
+
 }
