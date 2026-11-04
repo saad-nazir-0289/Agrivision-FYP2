@@ -361,3 +361,99 @@ textarea {
   margin: 0; 
   font-weight: 400; 
 }
+
+/* ---------- Farmer layout ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  padding: 0.6rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar-logo-text {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.topbar nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.nav-link {
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-link:hover {
+  background: var(--green-light);
+}
+
+.nav-link.active {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.profile {
+  position: relative;
+}
+
+.profile-btn {
+  padding: 0.5rem 0.9rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  min-width: 220px;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+.menu-info {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+}
+
+.menu-item {
+  width: 100%;
+  padding: 0.5rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--danger);
+  font-weight: 600;
+  cursor: pointer;
+}
