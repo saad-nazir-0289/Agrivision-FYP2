@@ -7,6 +7,7 @@ import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
+import NdviMap from './pages/NdviMap';
 
 export default function App() {
   return (
@@ -19,7 +20,7 @@ export default function App() {
       {/* Farmer pages share one layout: top bar on top, the current page below it. */}
       <Route element={<ProtectedRoute role="farmer"><FarmerLayout /></ProtectedRoute>}>
         <Route path="/" element={<ComingSoon title="Dashboard" />} />
-        <Route path="/ndvi-map" element={<ComingSoon title="NDVI Map" />} />
+        <Route path="/ndvi-map" element={<NdviMap />} />
         <Route path="/alerts" element={<ComingSoon title="Alerts" />} />
         <Route path="/trends" element={<ComingSoon title="Trends" />} />
       </Route>

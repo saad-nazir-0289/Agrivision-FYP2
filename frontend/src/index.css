@@ -457,3 +457,134 @@ textarea {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* ---------- NDVI map page ---------- */
+.leaflet-container {
+  z-index: 0; /* keeps the map's own layers below the sticky top bar */
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem 1.5rem;
+}
+
+.controls label {
+  margin-top: 0;
+}
+
+.controls select,
+.controls input[type='date'] {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1rem;
+  align-items: start; 
+  margin-bottom: 1rem;
+}
+
+.map-wrap {
+  position: relative;
+}
+
+.map-loading {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  padding: 0.4rem 1rem;
+  background: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+}
+
+.ndvi-overlay {
+  image-rendering: pixelated; /* crisp square pixels instead of a blurry smear */
+}
+
+.map-side .card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.big {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.shares {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.legend-bar {
+  height: 14px;
+  border-radius: 7px;
+}
+
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.disclaimer {
+  padding: 0.75rem 1rem;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.map.map-large {
+    height: 520px;
+    margin: 0;
+}
+
+.map-side .card:last-child {
+  margin-bottom: 0; 
+}
+
+.legend-labels + .muted {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem; 
+}
+
+.legend-ticks {
+    position: relative;
+    height: 1.3rem;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.legend-ticks span {
+    position: absolute;
+    transform: translateX(-50%);
+}
+
+.legend-ticks span:first-child {
+    transform: none;
+}
+
+.legend-ticks span:last-child {
+    transform: translateX(-100%);
+}
+
+@media (max-width: 900px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+}
