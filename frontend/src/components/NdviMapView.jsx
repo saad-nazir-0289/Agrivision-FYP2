@@ -3,8 +3,19 @@ import { MapContainer, TileLayer,AttributionControl, ImageOverlay, Polygon, useM
 import 'leaflet/dist/leaflet.css';
 import { ndviColor } from '../utils/ndvi';
 
+// This freezes the mini-map on the dashboard so it acts like a static image
+const FIXED = {
+  dragging: false,
+  zoomControl: false,
+  scrollWheelZoom: false,
+  doubleClickZoom: false,
+  touchZoom: false,
+  boxZoom: false,
+  keyboard: false
+};
+
 // Draws the grid as a tiny image: one image pixel per NDVI pixel, transparent outside the AOI.
-function toImage(pixels) {
+function toImage(pixels,colorOf) {
   const rows = pixels.length;
   const cols = pixels[0].length;
   const canvas = document.createElement('canvas');
@@ -15,7 +26,7 @@ function toImage(pixels) {
   pixels.forEach((row, r) =>
     row.forEach((v, c) => {
       if (v === null) return; // stays transparent
-      image.data.set([...ndviColor(v), 255], (r * cols + c) * 4);
+      image.data.set([...colorOf(v), 255], (r * cols + c) * 4);
     })
   );
   ctx.putImageData(image, 0, 0);
@@ -41,15 +52,15 @@ function Probe({ onProbe }) {
   return null;
 }
 
-export default function NdviMapView({ aoi, result, pixels, onProbe }) {
+export default function NdviMapView({ aoi, result, pixels, onProbe ,colorOf = ndviColor, small = false}) {
   const { south, west, north, east } = result.bounds;
   const bounds = useMemo(() => [[south, west], [north, east]], [south, west, north, east]);
-  const image = useMemo(() => toImage(pixels), [pixels]);
+  const image = useMemo(() => toImage(pixels, colorOf), [pixels, colorOf]);
   // GeoJSON stores [lng, lat] but Leaflet wants [lat, lng], so we flip.
   const outline = aoi.geometry.coordinates[0].map(([lng, lat]) => [lat, lng]);
 
   return (
-    <MapContainer center={[30.4, 69.3]} zoom={6} className="map map-large" attributionControl={false}>
+    <MapContainer center={[30.4, 69.3]} zoom={6} className={`map ${small ? 'map-small' : 'map-large'}`} {...(small ? FIXED : {})} attributionControl={false}>
       <AttributionControl prefix={false} />
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
@@ -60,7 +71,7 @@ export default function NdviMapView({ aoi, result, pixels, onProbe }) {
       <ImageOverlay url={image} bounds={bounds} opacity={0.85} className="ndvi-overlay" />
       <Polygon positions={outline} pathOptions={{ color: '#ffffff', weight: 2, fill: false, interactive: false }} />
       <FitTo bounds={bounds} />
-      <Probe onProbe={onProbe} />
+      {onProbe && <Probe onProbe={onProbe} />}
     </MapContainer>
   );
 }

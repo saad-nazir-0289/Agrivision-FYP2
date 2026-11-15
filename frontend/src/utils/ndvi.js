@@ -1,15 +1,18 @@
 // NDVI = (NIR - Red) / (NIR + Red), so it always lies between -1 and +1.
-// Below 0 there is no vegetation (water, cloud, snow). Plants start above 0 and dense crops reach 0.7 to 0.9.
-// One colour scale for the map and the legend, so they always match. [ndvi value, [r, g, b]]
+// Agricultural NDVI Standard
+// Anything below 0 (water, concrete) is colored a neutral grey so it doesn't distract the farmer.
+// The real crop data (0.0 to 1.0) stretches from Red to Dark Green.
 export const STOPS = [
-  [-1, [30, 64, 124]], // dark blue: water
-  [-0.001, [150, 170, 190]], // grey-blue: cloud, snow
-  [0, [215, 48, 39]], // red: bare ground, very little vegetation
-  [0.33, [253, 174, 97]], // orange
-  [0.5, [254, 224, 139]], // yellow
-  [0.66, [166, 217, 106]], // light green
-  [1, [26, 152, 80]], // dark green: dense vegetation
+  [-1.0, [220, 220, 220]],   // Grey (Water/Snow/Clouds)
+  [-0.001, [220, 220, 220]], // Keep all negatives flat grey
+  [0.0, [215, 25, 28]],      // Red (Bare soil / Severe Stress)
+  [0.33, [253, 174, 97]],    // Orange (Low vegetation / Stress)
+  [0.66, [166, 217, 106]],   // Light Green (Moderate Health)
+  [1.0, [26, 150, 65]],      // Dark Green (Dense / Very Healthy)
 ];
+
+// The legend gradient only draws the 0.0 to 1.0 colors, ignoring the negative greys
+export const legendGradient = 'linear-gradient(to right, rgb(215,25,28) 0%, rgb(253,174,97) 33%, rgb(166,217,106) 66%, rgb(26,150,65) 100%)';
 
 // Position of a value on the legend bar, as a percentage from the -1 end to the +1 end.
 export const legendPos = (v) => Math.round(((v + 1) / 2) * 10000) / 100;
@@ -21,8 +24,6 @@ const gradientStops = STOPS.map(([v, [r, g, b]]) => {
     return `${color} ${position}%`;
 });
 
-export const legendGradient =
-    `linear-gradient(to right, ${gradientStops.join(', ')})`;
 
 // Colour of an NDVI value, blended between the two nearest stops. Returns [r, g, b].
 export function ndviColor(value) {

@@ -98,7 +98,10 @@ export default function NdviMap() {
             {data ? (
               <>
                 <p className="big">{data.result.avgNdvi.toFixed(2)}</p>
-                <p className="muted">Average NDVI on {data.result.date}</p>
+                <p className="muted">
+                  <span>Average NDVI on {data.result.date}</span>
+                  {data.result.source === 'mock' && ' (demo data)'}
+                </p>
                 <p>{classify(data.result.avgNdvi)} overall (lowest {data.result.minNdvi.toFixed(2)}, highest {data.result.maxNdvi.toFixed(2)})</p>
                 <ul className="shares">
                   {Object.entries(shares).map(([name, pct]) => (
