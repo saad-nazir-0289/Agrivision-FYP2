@@ -149,6 +149,62 @@ describe('NDVI history', () => {
   });
 });
 
+describe('NDVI series', () => {
+  const series = (token, body) => call('POST', '/api/ndvi/series', body, token);
+  const april = (n) => Array.from({ length: n }, (_, i) => `2025-04-${String(i + 1).padStart(2, '0')}`);
+  const inApril = { aoi: undefined, date: { $gte: '2025-04-01', $lte: '2025-04-10' } };
+
+  it('requires login', async () => {
+    assert.equal((await series(undefined, { aoiId: aoi.id, from: '2025-04-01', to: '2025-04-02' })).status, 401);
+  });
+
+  it('makes every missing day in the range and returns them oldest first, without pixels', async () => {
+    const { status, data } = await series(farmerToken, { aoiId: aoi.id, from: '2025-04-01', to: '2025-04-10' });
+    assert.equal(status, 200);
+    assert.deepEqual(data.results.map((r) => r.date), april(10));
+    assert.equal(data.results[0].pixels, undefined);
+    assert.equal(await NdviResult.countDocuments({ ...inApril, aoi: aoi._id }), 10);
+  });
+
+  it('does not make duplicates when asked again', async () => {
+    const first = await series(farmerToken, { aoiId: aoi.id, from: '2025-04-01', to: '2025-04-10' });
+    const again = await series(farmerToken, { aoiId: aoi.id, from: '2025-04-01', to: '2025-04-10' });
+    assert.deepEqual(again.data.results.map((r) => r.id), first.data.results.map((r) => r.id));
+    assert.equal(await NdviResult.countDocuments({ ...inApril, aoi: aoi._id }), 10);
+  });
+
+  it('reuses a day that already exists', async () => {
+    const { data } = await series(farmerToken, { aoiId: aoi.id, from: DAY, to: DAY });
+    assert.equal(data.results.length, 1);
+    assert.equal(data.results[0].id, resultId);
+  });
+
+  it('gives the same average as the single-day calculation', async () => {
+    const { data } = await series(farmerToken, { aoiId: aoi.id, from: '2025-04-03', to: '2025-04-03' });
+    const single = await calculate(farmerToken, { aoiId: aoi.id, date: '2025-04-03' });
+    assert.equal(data.results[0].avgNdvi, single.data.result.avgNdvi);
+  });
+
+  it('lets an admin use it, and hides an AOI that is not assigned or does not exist', async () => {
+    assert.equal((await series(adminToken, { aoiId: aoi.id, from: '2025-04-01', to: '2025-04-02' })).status, 200);
+    assert.equal((await series(otherToken, { aoiId: aoi.id, from: '2025-04-01', to: '2025-04-02' })).status, 404);
+    assert.equal((await series(farmerToken, { aoiId: 'abc', from: '2025-04-01', to: '2025-04-02' })).status, 404);
+  });
+
+  it('rejects a backwards, malformed, missing, future or too long range', async () => {
+    const bad = [
+      { from: '2025-04-10', to: '2025-04-01' },
+      { from: 'nope', to: '2025-04-01' },
+      { from: '2025-04-01' },
+      { from: '2025-04-01', to: '2999-01-01' },
+      { from: '2025-01-01', to: '2025-06-01' }, // 152 days, more than the 120 allowed
+    ];
+    for (const range of bad) {
+      assert.equal((await series(farmerToken, { aoiId: aoi.id, ...range })).status, 400, JSON.stringify(range));
+    }
+  });
+});
+
 describe('Deleting an AOI', () => {
   it('removes its NDVI results', async () => {
     assert.ok((await NdviResult.countDocuments({ aoi: aoi._id })) > 0);
