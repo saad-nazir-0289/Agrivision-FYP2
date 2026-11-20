@@ -1,6 +1,7 @@
 import UsersPanel from '../components/UsersPanel';
 import { useAuth } from '../services/AuthContext';
 import AoisPanel from '../components/AoisPanel';
+import AlertRulesPanel from '../components/AlertRulesPanel';
 
 export default function Admin() {
   const { user, logout } = useAuth();
@@ -19,6 +20,7 @@ export default function Admin() {
         <h1>Admin panel</h1>
         <UsersPanel />
         <AoisPanel />
+        <AlertRulesPanel />
       </main>
     </div>
   );
